@@ -1,0 +1,21 @@
+{
+  "name": "test-again",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+  "node": "12.x"
+},
+  "scripts": {
+    "start": "cd server && npm install && node index.js",
+    "build": "cd client && npm install && npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+   "cacheDirectories": [
+    "client/node_modules",
+    "server/node_modules"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
