@@ -1,8 +1,9 @@
 import React from "react";
+import Counts from "./components/Counts";
 import "./App.css";
 
 function App() {
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState(null);
 
   React.useEffect(() => {
     async function fetchProducts() {
@@ -21,8 +22,7 @@ function App() {
     });
   }, []);
 
-  console.log(data);
-  return <div>hi</div>;
+  return <Counts products={data} />;
 }
 
 export default App;
