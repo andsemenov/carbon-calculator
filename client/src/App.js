@@ -1,28 +1,17 @@
-import React from "react";
+import { useState } from "react";
+import Header from "./components/Header";
 import Counts from "./components/Counts";
 import "./App.css";
 
 function App() {
-  const [data, setData] = React.useState(null);
+  const [selectedDistance, setSelectedDistance] = useState(0);
 
-  React.useEffect(() => {
-    async function fetchProducts() {
-      const response = await fetch("/products");
-
-      if (!response.ok) {
-        const message = `An error has occured: ${response.status}`;
-        throw new Error(message);
-      }
-
-      const products = await response.json();
-      return products;
-    }
-    fetchProducts().then((products) => {
-      setData([...products]);
-    });
-  }, []);
-
-  return <Counts products={data} />;
+  return (
+    <>
+      <Header setSelectedDistance={setSelectedDistance} />
+      <Counts selectedDistance={selectedDistance} />
+    </>
+  );
 }
 
 export default App;
