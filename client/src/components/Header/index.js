@@ -1,13 +1,12 @@
 import { useState } from "react";
-import Field from "./Field";
+import Field from "../../components/Field";
 
 const Header = (props) => {
   const [postCode, setPostCode] = useState("");
   const [distance, setDistance] = useState(0);
   const [footPrintSize, setFootPrintSize] = useState(0);
 
-  console.log(distance);
-  console.log(footPrintSize);
+  console.log("this is results", props.results);
   return (
     <>
       <p>Header</p>
