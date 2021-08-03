@@ -5,11 +5,12 @@ import "./App.css";
 
 function App() {
   const [selectedDistance, setSelectedDistance] = useState(0);
+  const [results, setResults] = useState([""]);
 
   return (
     <>
-      <Header setSelectedDistance={setSelectedDistance} />
-      <Counts selectedDistance={selectedDistance} />
+      <Header setSelectedDistance={setSelectedDistance} results={results} />
+      <Counts selectedDistance={selectedDistance} setResults={setResults} />
     </>
   );
 }
