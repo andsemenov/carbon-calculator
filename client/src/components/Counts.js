@@ -48,9 +48,7 @@ const Counts = (props) => {
 
   const itemOptions = productData
     .map((product) => ({
-      //key: product.id,
       label: product.productName,
-      //value: product.id,
       epd: product.epd,
     }))
     .sort((a, b) => (a.label < b.label ? -1 : 1));
@@ -62,50 +60,94 @@ const Counts = (props) => {
       <>
         {items.map((item) => {
           const { id } = item;
-
           return (
-            <div key={id} className="item">
+            <div key={id * id * 0.00001} className="item">
               <Select
                 options={itemOptions}
                 onChange={(selected) => {
-                  console.log("selected", selected);
-
-                  items[id].productName = selected.label;
                   const selectedParameters = data.find(
                     (item) => item.epd === selected.epd
                   );
-                  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                  items[id].manufacturing = +selectedParameters.manufacturing;
-                  items[id].assembly = +selectedParameters.assembly;
-                  items[id].transport = +selectedParameters.transport;
-
-                  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                  setItems([
+                    ...items.filter((product) => product.id !== id),
+                    {
+                      ...items[id],
+                      productName: selected.label,
+                      manufacturing: +selectedParameters.manufacturing,
+                      assembly: +selectedParameters.assembly,
+                      transport: +selectedParameters.transport,
+                    },
+                  ]);
                 }}
               />
 
               <Field
                 label={"Thickness"}
                 onChange={(event) => {
-                  setThickness(event.target.value);
-                  items[id].thickness = +event.target.value;
+                  setThickness(+event.target.value);
+                  setItems([
+                    ...items.filter((product) => product.id !== id),
+                    {
+                      ...items[id],
+                      thickness: +event.target.value,
+                    },
+                  ]);
+                  ///
+
+                  ///
+
+                  items[id].hasOwnProperty("surfaceArea") &&
+                    items[id].hasOwnProperty("thickness") &&
+                    setItems([
+                      ...items.filter((product) => product.id !== id),
+                      {
+                        ...items[id],
+                        volume:
+                          (items[id].thickness * items[id].surfaceArea) / 1000,
+                      },
+                    ]);
+                  ////
                 }}
               />
               <Field
                 label={"Surface Area "}
+                //key={id + "field2"}
                 onChange={(event) => {
-                  setSurfaceArea(event.target.value);
-                  items[id].surfaceArea = +event.target.value;
+                  setSurfaceArea(+event.target.value);
+                  setItems([
+                    ...items.filter((product) => product.id !== id),
+                    {
+                      ...items[id],
+                      surfaceArea: +event.target.value,
+                    },
+                  ]);
+
+                  if (
+                    items[id].hasOwnProperty("thickness") &&
+                    items[id].hasOwnProperty("surfaceArea")
+                  ) {
+                    items[id].volume =
+                      (items[id].thickness * items[id].surfaceArea) / 1000;
+                    console.log(items[id].volume);
+                    /*        setItems([
+                      ...items.filter((product) => product.id !== id),
+                      {
+                        ...items[id],
+                        volume: volume,
+                      },
+                    ]); */
+                  }
                 }}
               />
 
-              <p>
+              {/*    <p>
                 Volume
                 {
                   (items[id].volume =
                     (items[id].thickness * items[id].surfaceArea) / 1000)
                 }
-              </p>
-
+              </p> */}
+              {/*
               <p>
                 GWP Manufacturing per m
                 {
@@ -154,7 +196,7 @@ const Counts = (props) => {
                     items[id].gwpAssemblyTotal)
                 }
               </p>
-
+ */}
               <button onClick={() => removeItem(id)}>X</button>
             </div>
           );
