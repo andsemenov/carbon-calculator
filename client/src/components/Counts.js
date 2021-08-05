@@ -6,21 +6,11 @@ import { data } from "../assets/data";
 const Counts = (props) => {
   const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [counter, setCounter] = useState(0);
-  const [thickness, setThickness] = useState(0);
-  const [surfaceArea, setSurfaceArea] = useState(0);
+  //const [counter, setCounter] = useState(0);
+  //const [thickness, setThickness] = useState(0);
+  //const [surfaceArea, setSurfaceArea] = useState(0);
   const [items, setItems] = useState([]);
 
-  const removeItem = (id) => {
-    let newItems = items.filter((product) => product.id !== id);
-    setItems(newItems);
-  };
-
-  ///////////////////
-  useEffect(() => {
-    console.log();
-  }, [thickness, surfaceArea]);
-  /////////////////////
   useEffect(() => {
     async function fetchProducts() {
       const response = await fetch("/products");
@@ -35,7 +25,6 @@ const Counts = (props) => {
     }
     fetchProducts().then((products) => {
       if (products.length) {
-        ///////////////////////////////////////
         setProductData([...products]);
         setLoading(false);
       }
@@ -53,91 +42,61 @@ const Counts = (props) => {
     }))
     .sort((a, b) => (a.label < b.label ? -1 : 1));
 
+  const handleChange = (index) => (event) => {
+    console.log(event);
+
+    if (event.target.name === "thickness") {
+      let newArr = [...items];
+      newArr[index] = { ...newArr[index], thickness: event.target.value };
+      setItems(newArr);
+    }
+    if (event.target.name === "surfaceArea") {
+      let newArr = [...items];
+      newArr[index] = { ...newArr[index], surfaceArea: event.target.value };
+      setItems(newArr);
+    }
+  };
+
+  const removeItem = (index) => {
+    let newItems = items.filter((product, id) => id !== index);
+    setItems(newItems);
+  };
+
   console.log("items", items);
 
   if (!loading)
     return (
       <>
-        {items.map((item) => {
-          const { id } = item;
+        {items.map((item, index) => {
           return (
-            <div key={id * id * 0.00001} className="item">
+            <div key={index} className="item">
               <Select
                 options={itemOptions}
                 onChange={(selected) => {
                   const selectedParameters = data.find(
                     (item) => item.epd === selected.epd
                   );
-                  setItems([
-                    ...items.filter((product) => product.id !== id),
-                    {
-                      ...items[id],
-                      productName: selected.label,
-                      manufacturing: +selectedParameters.manufacturing,
-                      assembly: +selectedParameters.assembly,
-                      transport: +selectedParameters.transport,
-                    },
-                  ]);
+                  let newArr = [...items];
+                  newArr[index] = {
+                    ...newArr[index],
+                    ...selectedParameters,
+                  };
+                  setItems(newArr);
                 }}
               />
-
               <Field
                 label={"Thickness"}
-                onChange={(event) => {
-                  setThickness(+event.target.value);
-                  setItems([
-                    ...items.filter((product) => product.id !== id),
-                    {
-                      ...items[id],
-                      thickness: +event.target.value,
-                    },
-                  ]);
-                  ///
-
-                  ///
-
-                  items[id].hasOwnProperty("surfaceArea") &&
-                    items[id].hasOwnProperty("thickness") &&
-                    setItems([
-                      ...items.filter((product) => product.id !== id),
-                      {
-                        ...items[id],
-                        volume:
-                          (items[id].thickness * items[id].surfaceArea) / 1000,
-                      },
-                    ]);
-                  ////
-                }}
+                name="thickness"
+                id={index}
+                value={item.thickness}
+                onChange={handleChange(index)}
               />
               <Field
                 label={"Surface Area "}
-                //key={id + "field2"}
-                onChange={(event) => {
-                  setSurfaceArea(+event.target.value);
-                  setItems([
-                    ...items.filter((product) => product.id !== id),
-                    {
-                      ...items[id],
-                      surfaceArea: +event.target.value,
-                    },
-                  ]);
-
-                  if (
-                    items[id].hasOwnProperty("thickness") &&
-                    items[id].hasOwnProperty("surfaceArea")
-                  ) {
-                    items[id].volume =
-                      (items[id].thickness * items[id].surfaceArea) / 1000;
-                    console.log(items[id].volume);
-                    /*        setItems([
-                      ...items.filter((product) => product.id !== id),
-                      {
-                        ...items[id],
-                        volume: volume,
-                      },
-                    ]); */
-                  }
-                }}
+                name="surfaceArea"
+                id={index}
+                value={item.surfaceArea}
+                onChange={handleChange(index)}
               />
 
               {/*    <p>
@@ -197,15 +156,15 @@ const Counts = (props) => {
                 }
               </p>
  */}
-              <button onClick={() => removeItem(id)}>X</button>
+              <button onClick={() => removeItem(index)}>X</button>
             </div>
           );
         })}
         <button
           className="btn"
           onClick={() => {
-            setCounter((prevState) => prevState + 1);
-            setItems([...items, { id: counter }]);
+            //setCounter((prevState) => prevState + 1);
+            setItems([...items, { thickness: "", surfaceArea: "" }]);
           }}
         >
           Add items
