@@ -1,3 +1,4 @@
+//template for input
 const Field = ({ label, name, type, value, onChange }) => (
   <div>
     <label htmlFor={name} className="block text-sm font-semibold text-gray-700">

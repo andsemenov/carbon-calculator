@@ -6,11 +6,9 @@ import { data } from "../assets/data";
 const Counts = (props) => {
   const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
-  //const [counter, setCounter] = useState(0);
-  //const [thickness, setThickness] = useState(0);
-  //const [surfaceArea, setSurfaceArea] = useState(0);
   const [items, setItems] = useState([]);
 
+  //fetch data from db
   useEffect(() => {
     async function fetchProducts() {
       const response = await fetch("/products");
@@ -31,10 +29,13 @@ const Counts = (props) => {
     });
   }, []);
   let jsitems = JSON.stringify(items);
+
+  //transfer data to header component when items updated
   useEffect(() => {
     props.setResults(jsitems);
   }, [props, jsitems]);
 
+  //sort options for select
   const itemOptions = productData
     .map((product) => ({
       label: product.productName,
@@ -42,53 +43,38 @@ const Counts = (props) => {
     }))
     .sort((a, b) => (a.label < b.label ? -1 : 1));
 
-  /* const handleChange = (index) => (event) => {
-    console.log(event);
-
-    if (event.target.name === "thickness") {
-      let newArr = [...items];
-      newArr[index] = { ...newArr[index], thickness: event.target.value };
-      setItems(newArr);
-    }
-    if (event.target.name === "surfaceArea") {
-      let newArr = [...items];
-      newArr[index] = { ...newArr[index], surfaceArea: event.target.value };
-      setItems(newArr);
-    }
-  }; */
-
+  //track changes in input and add values to object with specific index
   const handleChange = (index) => (event) => {
+    let currentValue = +event.target.value;
     if (event.target.name === "thickness") {
       let newArr = [...items];
-      newArr[index] = { ...newArr[index], thickness: +event.target.value };
+      newArr[index] = { ...newArr[index], thickness: currentValue };
 
       if (items[index].thickness && items[index].surfaceArea) {
         newArr[index] = {
           ...newArr[index],
-          volume: (+event.target.value * newArr[index].surfaceArea) / 1000,
+          volume: (currentValue * newArr[index].surfaceArea) / 1000,
         };
       }
       setItems(newArr);
     }
     if (event.target.name === "surfaceArea") {
       let newArr = [...items];
-      newArr[index] = { ...newArr[index], surfaceArea: +event.target.value };
+      newArr[index] = { ...newArr[index], surfaceArea: currentValue };
       if (items[index].thickness && items[index].surfaceArea) {
         newArr[index] = {
           ...newArr[index],
-          volume: (newArr[index].thickness * +event.target.value) / 1000,
+          volume: (newArr[index].thickness * currentValue) / 1000,
         };
       }
       setItems(newArr);
     }
   };
-
+  //remove line from calculation list
   const removeItem = (index) => {
     let newItems = items.filter((product, id) => id !== index);
     setItems(newItems);
   };
-
-  console.log("items", items);
 
   if (!loading)
     return (
@@ -186,7 +172,6 @@ const Counts = (props) => {
         <button
           className="btn"
           onClick={() => {
-            //setCounter((prevState) => prevState + 1);
             setItems([
               ...items,
               { thickness: "", surfaceArea: "", volume: "" },
