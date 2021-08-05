@@ -187,7 +187,10 @@ const Counts = (props) => {
           className="btn"
           onClick={() => {
             //setCounter((prevState) => prevState + 1);
-            setItems([...items, { thickness: "", surfaceArea: "" }]);
+            setItems([
+              ...items,
+              { thickness: "", surfaceArea: "", volume: "" },
+            ]);
           }}
         >
           Add items
