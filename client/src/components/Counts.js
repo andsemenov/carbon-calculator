@@ -42,7 +42,7 @@ const Counts = (props) => {
     }))
     .sort((a, b) => (a.label < b.label ? -1 : 1));
 
-  const handleChange = (index) => (event) => {
+  /* const handleChange = (index) => (event) => {
     console.log(event);
 
     if (event.target.name === "thickness") {
@@ -53,6 +53,32 @@ const Counts = (props) => {
     if (event.target.name === "surfaceArea") {
       let newArr = [...items];
       newArr[index] = { ...newArr[index], surfaceArea: event.target.value };
+      setItems(newArr);
+    }
+  }; */
+
+  const handleChange = (index) => (event) => {
+    if (event.target.name === "thickness") {
+      let newArr = [...items];
+      newArr[index] = { ...newArr[index], thickness: +event.target.value };
+
+      if (items[index].thickness && items[index].surfaceArea) {
+        newArr[index] = {
+          ...newArr[index],
+          volume: (+event.target.value * newArr[index].surfaceArea) / 1000,
+        };
+      }
+      setItems(newArr);
+    }
+    if (event.target.name === "surfaceArea") {
+      let newArr = [...items];
+      newArr[index] = { ...newArr[index], surfaceArea: +event.target.value };
+      if (items[index].thickness && items[index].surfaceArea) {
+        newArr[index] = {
+          ...newArr[index],
+          volume: (newArr[index].thickness * +event.target.value) / 1000,
+        };
+      }
       setItems(newArr);
     }
   };
@@ -99,13 +125,10 @@ const Counts = (props) => {
                 onChange={handleChange(index)}
               />
 
-              {/*    <p>
+              <p>
                 Volume
-                {
-                  (items[id].volume =
-                    (items[id].thickness * items[id].surfaceArea) / 1000)
-                }
-              </p> */}
+                {item.volume}
+              </p>
               {/*
               <p>
                 GWP Manufacturing per m
@@ -164,7 +187,10 @@ const Counts = (props) => {
           className="btn"
           onClick={() => {
             //setCounter((prevState) => prevState + 1);
-            setItems([...items, { thickness: "", surfaceArea: "" }]);
+            setItems([
+              ...items,
+              { thickness: "", surfaceArea: "", volume: "" },
+            ]);
           }}
         >
           Add items
