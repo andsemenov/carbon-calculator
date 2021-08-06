@@ -9,7 +9,10 @@ const Counts = (props) => {
   const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
-  let gwpTotal = items.reduce((a, b) => +a + +b.gwpTotal, 0);
+  //counts summa of all gwp in list to calculate
+  let gwpTotal = items
+    .filter((item) => item.gwpTotal !== undefined)
+    .reduce((sum, val) => sum + val.gwpTotal, 0);
   //fetch data from db
   useEffect(() => {
     async function fetchProducts() {
@@ -35,6 +38,37 @@ const Counts = (props) => {
   useEffect(() => {
     props.setResults(gwpTotal);
   }, [props, gwpTotal]);
+
+  useEffect(() => {
+    const newItems = items.map((item) => {
+      ///////////////
+      if (item.gwpTotal) {
+        console.log(...items);
+        console.log(
+          ...calculateParameters(
+            item.volume,
+            item.manufacturing,
+            item.transport,
+            item.assembly,
+            props.selectedDistance
+          )
+        );
+        /*         item = {
+          ...item,
+          ...calculateParameters(
+            item.volume,
+            item.manufacturing,
+            item.transport,
+            item.assembly,
+            props.selectedDistance
+          ),
+        }; */
+      }
+      ////////////////////
+    });
+
+    //setItems(newItems);
+  }, [props.selectedDistance]);
 
   //sort options for select
   const itemOptions = productData
@@ -115,7 +149,7 @@ const Counts = (props) => {
     setItems(newItems);
   };
 
-  console.log(props.selectedDistance);
+  console.log(items);
 
   if (!loading)
     return (
