@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import Select from "react-select";
 import Field from "./Field";
 import { data } from "../assets/data";
+import { roundNumber } from "../assets/roundNumber";
+import { calculateParameters } from "../assets/calculateParameters";
 
 const Counts = (props) => {
   const [productData, setProductData] = useState([]);
@@ -28,7 +30,6 @@ const Counts = (props) => {
       }
     });
   }, []);
-  //  let jsitems = JSON.stringify(items);
 
   //transfer total GWP summa to header component when items updated
   useEffect(() => {
@@ -57,27 +58,16 @@ const Counts = (props) => {
           items[index].transport &&
           items[index].assembly
         ) {
-          const gwpManufacturingPerMeter = items[index].manufacturing * 10;
-          const gwpManufacturingTotal =
-            currentVolume * gwpManufacturingPerMeter;
-          const gwpTransportPerMeter =
-            (items[index].transport * props.selectedDistance * 10) / 600;
-          const gwpTransportTotal = currentVolume * gwpTransportPerMeter;
-          const gwpAssemblyPerMeter = items[index].assembly * 10;
-          const gwpAssemblyTotal = currentVolume * gwpAssemblyPerMeter;
-          const gwpTotal =
-            gwpManufacturingTotal + gwpTransportTotal + gwpAssemblyTotal;
-
           newArr[index] = {
             ...newArr[index],
-            volume: currentVolume,
-            gwpManufacturingPerMeter: gwpManufacturingPerMeter,
-            gwpManufacturingTotal: gwpManufacturingTotal,
-            gwpTransportPerMeter: gwpTransportPerMeter,
-            gwpTransportTotal: gwpTransportTotal,
-            gwpAssemblyPerMeter: gwpAssemblyPerMeter,
-            gwpAssemblyTotal: gwpAssemblyTotal,
-            gwpTotal: gwpTotal,
+            ...calculateParameters(
+              currentVolume,
+              items[index].manufacturing,
+              items[index].transport,
+              items[index].assembly,
+              items[index].distance,
+              props.selectedDistance
+            ),
           };
         } else {
           newArr[index] = {
@@ -99,27 +89,15 @@ const Counts = (props) => {
           items[index].transport &&
           items[index].assembly
         ) {
-          const gwpManufacturingPerMeter = items[index].manufacturing * 10;
-          const gwpManufacturingTotal =
-            currentVolume * gwpManufacturingPerMeter;
-          const gwpTransportPerMeter =
-            (items[index].transport * props.selectedDistance * 10) / 600;
-          const gwpTransportTotal = currentVolume * gwpTransportPerMeter;
-          const gwpAssemblyPerMeter = items[index].assembly * 10;
-          const gwpAssemblyTotal = currentVolume * gwpAssemblyPerMeter;
-          const gwpTotal =
-            gwpManufacturingTotal + gwpTransportTotal + gwpAssemblyTotal;
-
           newArr[index] = {
             ...newArr[index],
-            volume: currentVolume,
-            gwpManufacturingPerMeter: gwpManufacturingPerMeter,
-            gwpManufacturingTotal: gwpManufacturingTotal,
-            gwpTransportPerMeter: gwpTransportPerMeter,
-            gwpTransportTotal: gwpTransportTotal,
-            gwpAssemblyPerMeter: gwpAssemblyPerMeter,
-            gwpAssemblyTotal: gwpAssemblyTotal,
-            gwpTotal: gwpTotal,
+            ...calculateParameters(
+              currentVolume,
+              items[index].manufacturing,
+              items[index].transport,
+              items[index].assembly,
+              props.selectedDistance
+            ),
           };
         } else {
           newArr[index] = {
@@ -153,34 +131,16 @@ const Counts = (props) => {
                   );
                   let newArr = [...items];
                   if (items[index].volume) {
-                    let currentVolume = items[index].volume;
-                    const gwpManufacturingPerMeter =
-                      items[index].manufacturing * 10;
-                    const gwpManufacturingTotal =
-                      currentVolume * gwpManufacturingPerMeter;
-                    const gwpTransportPerMeter =
-                      (items[index].transport * props.selectedDistance * 10) /
-                      600;
-                    const gwpTransportTotal =
-                      currentVolume * gwpTransportPerMeter;
-                    const gwpAssemblyPerMeter = items[index].assembly * 10;
-                    const gwpAssemblyTotal =
-                      currentVolume * gwpAssemblyPerMeter;
-                    const gwpTotal =
-                      gwpManufacturingTotal +
-                      gwpTransportTotal +
-                      gwpAssemblyTotal;
-
                     newArr[index] = {
                       ...newArr[index],
                       ...selectedParameters,
-                      gwpManufacturingPerMeter: gwpManufacturingPerMeter,
-                      gwpManufacturingTotal: gwpManufacturingTotal,
-                      gwpTransportPerMeter: gwpTransportPerMeter,
-                      gwpTransportTotal: gwpTransportTotal,
-                      gwpAssemblyPerMeter: gwpAssemblyPerMeter,
-                      gwpAssemblyTotal: gwpAssemblyTotal,
-                      gwpTotal: gwpTotal,
+                      ...calculateParameters(
+                        items[index].volume,
+                        items[index].manufacturing,
+                        items[index].transport,
+                        items[index].assembly,
+                        props.selectedDistance
+                      ),
                     };
                   } else {
                     newArr[index] = {
@@ -192,50 +152,56 @@ const Counts = (props) => {
                 }}
               />
               <Field
-                label={"Thickness"}
+                label={"Thickness*"}
                 name="thickness"
                 id={index}
                 value={item.thickness}
                 onChange={handleChange(index)}
               />
               <Field
-                label={"Surface Area "}
+                label={"Surface Area*"}
                 name="surfaceArea"
                 id={index}
                 value={item.surfaceArea}
                 onChange={handleChange(index)}
               />
-
               <p>
                 Volume
-                {item.volume}
+                {roundNumber(item.volume) || null}
               </p>
-
-              <p>GWP Manufacturing per m{item.gwpManufacturingPerMeter}</p>
+              <p>
+                GWP Manufacturing per m
+                {roundNumber(item.gwpManufacturingPerMeter) || null}
+              </p>
               <p>
                 GWP Manufacturing total
-                {item.gwpManufacturingTotal}
+                {roundNumber(item.gwpManufacturingTotal) || null}
               </p>
-              <p>GWP Transport per m{item.gwpTransportPerMeter}</p>
+              <p>
+                GWP Transport per m
+                {roundNumber(item.gwpTransportPerMeter) || null}
+              </p>
               <p>
                 GWP Transport total
-                {item.gwpTransportTotal}
+                {roundNumber(item.gwpTransportTotal) || null}
               </p>
-              <p>GWP Assembly per m{item.gwpAssemblyPerMeter}</p>
+              <p>
+                GWP Assembly per m
+                {roundNumber(item.gwpAssemblyPerMeter) || null}
+              </p>
               <p>
                 GWP Assembly total
-                {item.gwpAssemblyTotal}
+                {roundNumber(item.gwpAssemblyTotal) || null}
               </p>
               <p>
                 GWP total
-                {item.gwpTotal}
+                {roundNumber(item.gwpTotal) || null}
               </p>
-
               <button onClick={() => removeItem(index)}>X</button>
             </div>
           );
         })}
-        <p>Summa GWP{gwpTotal}</p>
+        <p>Summa GWP{roundNumber(gwpTotal) || null}</p>
 
         <button
           className="btn"
