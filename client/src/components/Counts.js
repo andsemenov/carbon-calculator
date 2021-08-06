@@ -7,7 +7,7 @@ const Counts = (props) => {
   const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
-
+  let gwpTotal = items.reduce((a, b) => +a + +b.gwpTotal, 0);
   //fetch data from db
   useEffect(() => {
     async function fetchProducts() {
@@ -28,12 +28,12 @@ const Counts = (props) => {
       }
     });
   }, []);
-  let jsitems = JSON.stringify(items);
+  //  let jsitems = JSON.stringify(items);
 
-  //transfer data to header component when items updated
+  //transfer total GWP summa to header component when items updated
   useEffect(() => {
-    props.setResults(jsitems);
-  }, [props, jsitems]);
+    props.setResults(gwpTotal);
+  }, [props, gwpTotal]);
 
   //sort options for select
   const itemOptions = productData
@@ -43,7 +43,7 @@ const Counts = (props) => {
     }))
     .sort((a, b) => (a.label < b.label ? -1 : 1));
 
-  //track changes in input and add values to object with specific index
+  //track changes in input and calculates, add values to object with specific index
   const handleChange = (index) => (event) => {
     let currentValue = +event.target.value;
     if (event.target.name === "thickness") {
@@ -51,21 +51,82 @@ const Counts = (props) => {
       newArr[index] = { ...newArr[index], thickness: currentValue };
 
       if (items[index].thickness && items[index].surfaceArea) {
-        newArr[index] = {
-          ...newArr[index],
-          volume: (currentValue * newArr[index].surfaceArea) / 1000,
-        };
+        let currentVolume = (currentValue * newArr[index].surfaceArea) / 1000;
+        if (
+          items[index].manufacturing &&
+          items[index].transport &&
+          items[index].assembly
+        ) {
+          const gwpManufacturingPerMeter = items[index].manufacturing * 10;
+          const gwpManufacturingTotal =
+            currentVolume * gwpManufacturingPerMeter;
+          const gwpTransportPerMeter =
+            (items[index].transport * props.selectedDistance * 10) / 600;
+          const gwpTransportTotal = currentVolume * gwpTransportPerMeter;
+          const gwpAssemblyPerMeter = items[index].assembly * 10;
+          const gwpAssemblyTotal = currentVolume * gwpAssemblyPerMeter;
+          const gwpTotal =
+            gwpManufacturingTotal + gwpTransportTotal + gwpAssemblyTotal;
+
+          newArr[index] = {
+            ...newArr[index],
+            volume: currentVolume,
+            gwpManufacturingPerMeter: gwpManufacturingPerMeter,
+            gwpManufacturingTotal: gwpManufacturingTotal,
+            gwpTransportPerMeter: gwpTransportPerMeter,
+            gwpTransportTotal: gwpTransportTotal,
+            gwpAssemblyPerMeter: gwpAssemblyPerMeter,
+            gwpAssemblyTotal: gwpAssemblyTotal,
+            gwpTotal: gwpTotal,
+          };
+        } else {
+          newArr[index] = {
+            ...newArr[index],
+            volume: currentVolume,
+          };
+        }
       }
       setItems(newArr);
     }
     if (event.target.name === "surfaceArea") {
       let newArr = [...items];
       newArr[index] = { ...newArr[index], surfaceArea: currentValue };
+
       if (items[index].thickness && items[index].surfaceArea) {
-        newArr[index] = {
-          ...newArr[index],
-          volume: (newArr[index].thickness * currentValue) / 1000,
-        };
+        let currentVolume = (currentValue * newArr[index].thickness) / 1000;
+        if (
+          items[index].manufacturing &&
+          items[index].transport &&
+          items[index].assembly
+        ) {
+          const gwpManufacturingPerMeter = items[index].manufacturing * 10;
+          const gwpManufacturingTotal =
+            currentVolume * gwpManufacturingPerMeter;
+          const gwpTransportPerMeter =
+            (items[index].transport * props.selectedDistance * 10) / 600;
+          const gwpTransportTotal = currentVolume * gwpTransportPerMeter;
+          const gwpAssemblyPerMeter = items[index].assembly * 10;
+          const gwpAssemblyTotal = currentVolume * gwpAssemblyPerMeter;
+          const gwpTotal =
+            gwpManufacturingTotal + gwpTransportTotal + gwpAssemblyTotal;
+
+          newArr[index] = {
+            ...newArr[index],
+            volume: currentVolume,
+            gwpManufacturingPerMeter: gwpManufacturingPerMeter,
+            gwpManufacturingTotal: gwpManufacturingTotal,
+            gwpTransportPerMeter: gwpTransportPerMeter,
+            gwpTransportTotal: gwpTransportTotal,
+            gwpAssemblyPerMeter: gwpAssemblyPerMeter,
+            gwpAssemblyTotal: gwpAssemblyTotal,
+            gwpTotal: gwpTotal,
+          };
+        } else {
+          newArr[index] = {
+            ...newArr[index],
+            volume: currentVolume,
+          };
+        }
       }
       setItems(newArr);
     }
@@ -75,6 +136,8 @@ const Counts = (props) => {
     let newItems = items.filter((product, id) => id !== index);
     setItems(newItems);
   };
+
+  console.log(props.selectedDistance);
 
   if (!loading)
     return (
@@ -89,10 +152,42 @@ const Counts = (props) => {
                     (item) => item.epd === selected.epd
                   );
                   let newArr = [...items];
-                  newArr[index] = {
-                    ...newArr[index],
-                    ...selectedParameters,
-                  };
+                  if (items[index].volume) {
+                    let currentVolume = items[index].volume;
+                    const gwpManufacturingPerMeter =
+                      items[index].manufacturing * 10;
+                    const gwpManufacturingTotal =
+                      currentVolume * gwpManufacturingPerMeter;
+                    const gwpTransportPerMeter =
+                      (items[index].transport * props.selectedDistance * 10) /
+                      600;
+                    const gwpTransportTotal =
+                      currentVolume * gwpTransportPerMeter;
+                    const gwpAssemblyPerMeter = items[index].assembly * 10;
+                    const gwpAssemblyTotal =
+                      currentVolume * gwpAssemblyPerMeter;
+                    const gwpTotal =
+                      gwpManufacturingTotal +
+                      gwpTransportTotal +
+                      gwpAssemblyTotal;
+
+                    newArr[index] = {
+                      ...newArr[index],
+                      ...selectedParameters,
+                      gwpManufacturingPerMeter: gwpManufacturingPerMeter,
+                      gwpManufacturingTotal: gwpManufacturingTotal,
+                      gwpTransportPerMeter: gwpTransportPerMeter,
+                      gwpTransportTotal: gwpTransportTotal,
+                      gwpAssemblyPerMeter: gwpAssemblyPerMeter,
+                      gwpAssemblyTotal: gwpAssemblyTotal,
+                      gwpTotal: gwpTotal,
+                    };
+                  } else {
+                    newArr[index] = {
+                      ...newArr[index],
+                      ...selectedParameters,
+                    };
+                  }
                   setItems(newArr);
                 }}
               />
@@ -115,60 +210,33 @@ const Counts = (props) => {
                 Volume
                 {item.volume}
               </p>
-              {/*
-              <p>
-                GWP Manufacturing per m
-                {
-                  (items[id].gwpManufacturingPerMeter =
-                    items[id].manufacturing * 10)
-                }
-              </p>
+
+              <p>GWP Manufacturing per m{item.gwpManufacturingPerMeter}</p>
               <p>
                 GWP Manufacturing total
-                {
-                  (items[id].gwpManufacturingTotal =
-                    items[id].volume * items[id].gwpManufacturingPerMeter)
-                }
+                {item.gwpManufacturingTotal}
               </p>
-              <p>
-                GWP Transport per m
-                {
-                  (items[id].gwpTransportPerMeter =
-                    (items[id].transport * 10 * props.selectedDistance) / 600)
-                }
-              </p>
+              <p>GWP Transport per m{item.gwpTransportPerMeter}</p>
               <p>
                 GWP Transport total
-                {
-                  (items[id].gwpTransportTotal =
-                    items[id].volume * items[id].gwpTransportPerMeter)
-                }
+                {item.gwpTransportTotal}
               </p>
-              <p>
-                GWP Assembly per m
-                {(items[id].gwpAssemblyPerMeter = items[id].assembly * 10)}
-              </p>
+              <p>GWP Assembly per m{item.gwpAssemblyPerMeter}</p>
               <p>
                 GWP Assembly total
-                {
-                  (items[id].gwpAssemblyTotal =
-                    items[id].volume * items[id].gwpAssemblyPerMeter)
-                }
+                {item.gwpAssemblyTotal}
               </p>
               <p>
                 GWP total
-                {
-                  (items[id].gwpTotal =
-                    items[id].gwpManufacturingTotal +
-                    items[id].gwpTransportTotal +
-                    items[id].gwpAssemblyTotal)
-                }
+                {item.gwpTotal}
               </p>
- */}
+
               <button onClick={() => removeItem(index)}>X</button>
             </div>
           );
         })}
+        <p>Summa GWP{gwpTotal}</p>
+
         <button
           className="btn"
           onClick={() => {

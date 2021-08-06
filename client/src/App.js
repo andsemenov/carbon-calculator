@@ -5,7 +5,7 @@ import "./App.css";
 
 function App() {
   const [selectedDistance, setSelectedDistance] = useState(0);
-  const [results, setResults] = useState([""]);
+  const [results, setResults] = useState(0);
 
   return (
     <>
