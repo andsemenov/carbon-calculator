@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Field from "../../components/Field";
+import { roundNumber } from "../../assets/roundNumber";
 
 const Header = (props) => {
   const [postCode, setPostCode] = useState("");
@@ -14,12 +15,14 @@ const Header = (props) => {
       <div>
         <Field
           label={"Site postcode"}
+          value={postCode}
           onChange={(event) => {
             setPostCode(event.target.value);
           }}
         />
         <Field
-          label={"Distance"}
+          label={"Distance*"}
+          //value={distance}
           onChange={(event) => {
             //setDistance(event.target.value);
             props.setSelectedDistance(event.target.value);
@@ -27,13 +30,14 @@ const Header = (props) => {
         />
 
         <Field
-          label={"Footprint Size"}
+          label={"Footprint Size*"}
+          //value={footPrintSize}
           onChange={(event) => {
             // setDistance(event.target.value);
             setFootPrintSize(event.target.value);
           }}
         />
-        <p>Total GWP{props.results}</p>
+        <p>Total GWP{roundNumber(props.results / footPrintSize) || null}</p>
       </div>
     </>
   );
