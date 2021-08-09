@@ -106,6 +106,13 @@ const Counts = (props) => {
         }
         setItems(newArr);
       } else {
+        //change volume if wrong input
+        let newArr = [...items];
+        newArr[index] = {
+          ...newArr[index],
+          volume: 0,
+        };
+        setItems([...newArr]);
         //change errors message
         let newErrors = [...errors];
         console.log("newErr", newErrors);
@@ -116,7 +123,6 @@ const Counts = (props) => {
         };
         setErrors(newErrors);
       }
-      /////////////////////////
     }
     if (event.target.name === "surfaceArea") {
       if (/^(0|\+?[1-9]\d*)$/.test(currentValue)) {
@@ -154,6 +160,13 @@ const Counts = (props) => {
         // }
         setItems(newArr);
       } else {
+        //change volume if wrong input
+        let newArr = [...items];
+        newArr[index] = {
+          ...newArr[index],
+          volume: 0,
+        };
+        setItems([...newArr]);
         //change errors message
         let newErrors = [...errors];
         console.log("newErr", newErrors);
@@ -187,7 +200,7 @@ const Counts = (props) => {
                 }`}
                 errors={errors[index].item}
                 onChange={(selected) => {
-                  /////////////////
+                  //change error to false
                   let newErrors = [...errors];
                   console.log("newErr", newErrors);
                   newErrors[index].item = {
@@ -195,7 +208,7 @@ const Counts = (props) => {
                     error: false,
                   };
                   setErrors(newErrors);
-                  ////////////////
+
                   const selectedParameters = data.find(
                     (item) => item.epd === selected.epd
                   );
@@ -282,7 +295,6 @@ const Counts = (props) => {
           );
         })}
         <p>Summa GWP kgCO2e{roundNumber(gwpTotal) || null}</p>
-
         <button
           className="btn"
           onClick={() => {
