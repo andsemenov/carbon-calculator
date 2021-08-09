@@ -9,6 +9,7 @@ const Counts = (props) => {
   const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
+  const [errors, setErrors] = useState([]);
   //counts summa of all gwp in list to calculate
   let gwpTotal = items
     .filter((item) => item.gwpTotal)
@@ -68,10 +69,18 @@ const Counts = (props) => {
   const handleChange = (index) => (event) => {
     let currentValue = +event.target.value;
     if (event.target.name === "thickness") {
-      let newArr = [...items];
-      newArr[index] = { ...newArr[index], thickness: currentValue };
+      if (/^(0|\+?[1-9]\d*)$/.test(currentValue)) {
+        //change array errors thickness -make error false
+        let newErrors = [...errors];
+        newErrors[index].thickness = {
+          ...newErrors[index].thickness,
+          error: false,
+        };
+        setErrors(newErrors);
 
-      if (items[index].thickness && items[index].surfaceArea) {
+        //////////////////////////////////////
+        let newArr = [...items];
+        newArr[index] = { ...newArr[index], thickness: currentValue };
         let currentVolume = (currentValue * newArr[index].surfaceArea) / 1000;
         if (
           items[index].manufacturing &&
@@ -95,14 +104,31 @@ const Counts = (props) => {
             volume: currentVolume,
           };
         }
+        setItems(newArr);
+      } else {
+        //change errors message
+        let newErrors = [...errors];
+        console.log("newErr", newErrors);
+        newErrors[index].thickness = {
+          ...newErrors[index].thickness,
+          error: true,
+          message: "only numbers 0 or greater allowed",
+        };
+        setErrors(newErrors);
       }
-      setItems(newArr);
+      /////////////////////////
     }
     if (event.target.name === "surfaceArea") {
-      let newArr = [...items];
-      newArr[index] = { ...newArr[index], surfaceArea: currentValue };
-
-      if (items[index].thickness && items[index].surfaceArea) {
+      if (/^(0|\+?[1-9]\d*)$/.test(currentValue)) {
+        //change array errors surfaceArea -make error false
+        let newErrors = [...errors];
+        newErrors[index].surfaceArea = {
+          ...newErrors[index].surfaceArea,
+          error: false,
+        };
+        setErrors(newErrors);
+        let newArr = [...items];
+        newArr[index] = { ...newArr[index], surfaceArea: currentValue };
         let currentVolume = (currentValue * newArr[index].thickness) / 1000;
         if (
           items[index].manufacturing &&
@@ -125,18 +151,29 @@ const Counts = (props) => {
             volume: currentVolume,
           };
         }
+        // }
+        setItems(newArr);
+      } else {
+        //change errors message
+        let newErrors = [...errors];
+        console.log("newErr", newErrors);
+        newErrors[index].surfaceArea = {
+          ...newErrors[index].surfaceArea,
+          error: true,
+          message: "only numbers 0 or greater allowed",
+        };
+        setErrors(newErrors);
       }
-      setItems(newArr);
     }
   };
   //remove line from calculation list
   const removeItem = (index) => {
-    let newItems = items.filter((product, id) => id !== index);
+    let newItems = items.filter((item, id) => id !== index);
     setItems(newItems);
+    let newErrors = errors.filter((error, id) => id !== index);
+    setErrors(newErrors);
   };
-
-  console.log(items);
-
+  console.log("error", errors);
   if (!loading)
     return (
       <>
@@ -145,49 +182,72 @@ const Counts = (props) => {
             <div key={index} className="item">
               <Select
                 options={itemOptions}
+                className={`form-control ${
+                  errors[index].item.error && "invalid"
+                }`}
+                errors={errors[index].item}
                 onChange={(selected) => {
+                  /////////////////
+                  let newErrors = [...errors];
+                  console.log("newErr", newErrors);
+                  newErrors[index].item = {
+                    ...newErrors[index].item,
+                    error: false,
+                  };
+                  setErrors(newErrors);
+                  ////////////////
                   const selectedParameters = data.find(
                     (item) => item.epd === selected.epd
                   );
+
                   let newArr = [...items];
-                  if (items[index].volume) {
-                    newArr[index] = {
-                      ...newArr[index],
-                      ...selectedParameters,
-                      ...calculateParameters(
-                        items[index].volume,
-                        items[index].manufacturing,
-                        items[index].transport,
-                        items[index].assembly,
-                        props.selectedDistance
-                      ),
-                    };
-                  } else {
-                    newArr[index] = {
-                      ...newArr[index],
-                      ...selectedParameters,
-                    };
-                  }
+                  console.log("newArr", newArr);
+                  newArr[index] = {
+                    ...newArr[index],
+                    ...selectedParameters,
+                    ...calculateParameters(
+                      newArr[index].volume,
+                      selectedParameters.manufacturing,
+                      selectedParameters.transport,
+                      selectedParameters.assembly,
+                      props.selectedDistance
+                    ),
+                  };
                   setItems(newArr);
                 }}
               />
+              {errors[index].item.error && (
+                <small className="text-danger">
+                  {errors[index].item.message}
+                </small>
+              )}
               <Field
                 label={"Thickness*"}
                 name="thickness"
+                className={`form-control ${
+                  errors[index].thickness.error && "invalid"
+                }`}
                 id={index}
-                value={item.thickness}
+                //value={item.thickness}
+                placeholder={"0"}
+                errors={errors[index].thickness}
                 onChange={handleChange(index)}
               />
               <Field
                 label={"Surface Area*"}
                 name="surfaceArea"
+                className={`form-control ${
+                  errors[index].surfaceArea.error && "invalid"
+                }`}
                 id={index}
-                value={item.surfaceArea}
+                //value={item.surfaceArea}
+                placeholder={"0"}
+                errors={errors[index].surfaceArea}
                 onChange={handleChange(index)}
               />
               <p>
                 Volume
-                {roundNumber(item.volume) || null}
+                {roundNumber(item.volume)}
               </p>
               <p>
                 GWP Manufacturing per m
@@ -221,14 +281,28 @@ const Counts = (props) => {
             </div>
           );
         })}
-        <p>Summa GWP{roundNumber(gwpTotal) || null}</p>
+        <p>Summa GWP kgCO2e{roundNumber(gwpTotal) || null}</p>
 
         <button
           className="btn"
           onClick={() => {
-            setItems([
-              ...items,
-              { thickness: "", surfaceArea: "", volume: "" },
+            setItems([...items, { thickness: 0, surfaceArea: 0, volume: 0 }]);
+            setErrors([
+              ...errors,
+              {
+                item: {
+                  error: true,
+                  message: "mat required",
+                },
+                thickness: {
+                  error: true,
+                  message: "thick required",
+                },
+                surfaceArea: {
+                  error: true,
+                  message: "surf required",
+                },
+              },
             ]);
           }}
         >

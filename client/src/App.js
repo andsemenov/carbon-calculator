@@ -5,12 +5,22 @@ import "./App.css";
 
 function App() {
   const [selectedDistance, setSelectedDistance] = useState(0);
+  const [validFootprintSize, setValidFootprintSize] = useState(false);
   const [results, setResults] = useState(0);
 
   return (
     <>
-      <Header setSelectedDistance={setSelectedDistance} results={results} />
-      <Counts selectedDistance={selectedDistance} setResults={setResults} />
+      <Header
+        setSelectedDistance={setSelectedDistance}
+        validFootprintSize={validFootprintSize}
+        setValidFootprintSize={setValidFootprintSize}
+        results={results}
+      />
+      <Counts
+        selectedDistance={selectedDistance}
+        validFootprintSize={validFootprintSize}
+        setResults={setResults}
+      />
     </>
   );
 }
