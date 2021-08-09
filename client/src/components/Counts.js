@@ -4,6 +4,8 @@ import Field from "./Field";
 import { data } from "../assets/data";
 import { roundNumber } from "../assets/roundNumber";
 import { calculateParameters } from "../assets/calculateParameters";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const Counts = (props) => {
   const [productData, setProductData] = useState([]);
@@ -290,7 +292,9 @@ const Counts = (props) => {
                 GWP total
                 {roundNumber(item.gwpTotal) || null}
               </p>
-              <button onClick={() => removeItem(index)}>X</button>
+              <button onClick={() => removeItem(index)}>
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
             </div>
           );
         })}
@@ -318,7 +322,7 @@ const Counts = (props) => {
             ]);
           }}
         >
-          Add items
+          <FontAwesomeIcon icon={faPlus} />
         </button>
       </>
     );
