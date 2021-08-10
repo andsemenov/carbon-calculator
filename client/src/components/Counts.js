@@ -295,6 +295,7 @@ const Counts = (props) => {
               <button onClick={() => removeItem(index)}>
                 <FontAwesomeIcon icon={faTrash} />
               </button>
+              {/*      <hr className="dotted-line" /> */}
             </div>
           );
         })}
