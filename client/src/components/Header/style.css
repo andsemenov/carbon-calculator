@@ -1,7 +1,70 @@
-.invalid {
-  border: 1px solid red !important;
+#header-title {
+  text-align: center;
 }
+
+.invalid {
+  border: 2px solid red !important;
+}
+
+.text-danger {
+  margin: 0;
+  color: red;
+  font-size: 0.9rem;
+}
+
 input {
   outline: none !important;
   box-shadow: none !important;
+}
+
+.header-table {
+  font-family: Arial, Verdana, sans-serif;
+}
+
+.data-in-row,
+.title-in-row {
+  width: 23.5vw;
+  height: 3.5rem;
+  text-align: start;
+}
+
+.header-table-body {
+  display: flex;
+}
+
+.header-row {
+  display: flex;
+}
+
+.title-in-row p {
+  margin: 0;
+}
+
+@media only screen and (max-width: 700px) {
+  .header-table-body {
+    flex-direction: column;
+  }
+
+  .data-in-row,
+  .title-in-row {
+    width: 47vw;
+  }
+}
+
+@media only screen and (max-width: 350px) {
+  .header-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .data-in-row,
+  .title-in-row {
+    width: 94vw;
+    height: 2.5rem;
+  }
+
+  .title-in-row {
+    display: flex;
+    align-items: center;
+  }
 }
