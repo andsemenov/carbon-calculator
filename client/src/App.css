@@ -4,7 +4,97 @@ body {
   justify-content: center;
   align-items: flex-end;
 }
+#main-table-calculation {
+  background-color: #fbfbfb;
+}
+.th-calc-list {
+  font-size: 80%;
+}
+#table-total-sum {
+  background-color: #fdf983;
+}
+#total-sum-value p {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+}
 
-.dotted-line {
-  border-top: 3px dotted #bbb;
+#total-sum-title p {
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.add-calculation {
+  margin: 0.5rem;
+  cursor: pointer;
+  background-color: #d5f3d7;
+}
+
+.pivoted {
+  text-align: center;
+  width: 7vw;
+}
+
+.delete-calculation {
+  cursor: pointer;
+  background-color: #cdccd1;
+  margin-right: 1rem;
+}
+
+#material {
+  width: 14vw;
+}
+
+#thickness,
+#surfaceArea {
+  width: 10vw;
+}
+
+.td-align-top {
+  vertical-align: top;
+}
+
+.calc-values p {
+  margin-top: 0;
+}
+
+@media only screen and (max-width: 640px) {
+  #material,
+  #thickness,
+  #surfaceArea {
+    width: 40vw;
+  }
+  #delete-row {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .pivoted {
+    width: 50vw;
+    height: 4rem;
+  }
+  .pivoted p {
+    margin-top: 0;
+  }
+  .delete-calculation {
+    margin-right: 2rem;
+    margin-top: 2rem;
+    height: 1.5rem;
+  }
+
+  #total-sum-value {
+    height: 2.5rem;
+  }
+}
+
+@media only screen and (max-width: 380px) {
+  .text-danger {
+    font-size: 0.7rem;
+  }
+}
+
+@media only screen and (max-width: 330px) {
+  #total-sum-value p {
+    font-size: 85%;
+  }
 }

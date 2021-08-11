@@ -9,21 +9,18 @@ const Field = ({
   errors,
   placeholder,
 }) => (
-  <div>
-    <label htmlFor={name}>{label}</label>
-    <div>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        value={value}
-        onChange={onChange}
-        className={className}
-        placeholder={placeholder}
-      />
-    </div>
-    {errors.error && <small className="text-danger">{errors.message}</small>}
-  </div>
+  <>
+    <input
+      id={name}
+      name={name}
+      type={type}
+      value={value}
+      onChange={onChange}
+      className={className}
+      placeholder={placeholder}
+    />
+    {errors.error && <p className="text-danger">{errors.message}</p>}
+  </>
 );
 
 export default Field;

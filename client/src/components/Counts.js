@@ -6,6 +6,8 @@ import { roundNumber } from "../assets/roundNumber";
 import { calculateParameters } from "../assets/calculateParameters";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
+import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 
 const Counts = (props) => {
   const [productData, setProductData] = useState([]);
@@ -79,8 +81,6 @@ const Counts = (props) => {
           error: false,
         };
         setErrors(newErrors);
-
-        //////////////////////////////////////
         let newArr = [...items];
         newArr[index] = { ...newArr[index], thickness: currentValue };
         let currentVolume = (currentValue * newArr[index].surfaceArea) / 1000;
@@ -117,11 +117,10 @@ const Counts = (props) => {
         setItems([...newArr]);
         //change errors message
         let newErrors = [...errors];
-        console.log("newErr", newErrors);
         newErrors[index].thickness = {
           ...newErrors[index].thickness,
           error: true,
-          message: "only numbers 0 or greater allowed",
+          message: "Only numbers 0 or greater allowed!",
         };
         setErrors(newErrors);
       }
@@ -171,11 +170,10 @@ const Counts = (props) => {
         setItems([...newArr]);
         //change errors message
         let newErrors = [...errors];
-        console.log("newErr", newErrors);
         newErrors[index].surfaceArea = {
           ...newErrors[index].surfaceArea,
           error: true,
-          message: "only numbers 0 or greater allowed",
+          message: "Only numbers 0 or greater allowed!",
         };
         setErrors(newErrors);
       }
@@ -188,120 +186,121 @@ const Counts = (props) => {
     let newErrors = errors.filter((error, id) => id !== index);
     setErrors(newErrors);
   };
-  console.log("error", errors);
   if (!loading)
     return (
       <>
-        {items.map((item, index) => {
-          return (
-            <div key={index} className="item">
-              <Select
-                options={itemOptions}
-                className={`form-control ${
-                  errors[index].item.error && "invalid"
-                }`}
-                errors={errors[index].item}
-                onChange={(selected) => {
-                  //change error to false
-                  let newErrors = [...errors];
-                  console.log("newErr", newErrors);
-                  newErrors[index].item = {
-                    ...newErrors[index].item,
-                    error: false,
-                  };
-                  setErrors(newErrors);
-
-                  const selectedParameters = data.find(
-                    (item) => item.epd === selected.epd
-                  );
-
-                  let newArr = [...items];
-                  console.log("newArr", newArr);
-                  newArr[index] = {
-                    ...newArr[index],
-                    ...selectedParameters,
-                    ...calculateParameters(
-                      newArr[index].volume,
-                      selectedParameters.manufacturing,
-                      selectedParameters.transport,
-                      selectedParameters.assembly,
-                      props.selectedDistance
-                    ),
-                  };
-                  setItems(newArr);
-                }}
-              />
-              {errors[index].item.error && (
-                <small className="text-danger">
-                  {errors[index].item.message}
-                </small>
-              )}
-              <Field
-                label={"Thickness*"}
-                name="thickness"
-                className={`form-control ${
-                  errors[index].thickness.error && "invalid"
-                }`}
-                id={index}
-                //value={item.thickness}
-                placeholder={"0"}
-                errors={errors[index].thickness}
-                onChange={handleChange(index)}
-              />
-              <Field
-                label={"Surface Area*"}
-                name="surfaceArea"
-                className={`form-control ${
-                  errors[index].surfaceArea.error && "invalid"
-                }`}
-                id={index}
-                //value={item.surfaceArea}
-                placeholder={"0"}
-                errors={errors[index].surfaceArea}
-                onChange={handleChange(index)}
-              />
-              <p>
-                Volume
-                {roundNumber(item.volume)}
-              </p>
-              <p>
-                GWP Manufacturing per m
-                {roundNumber(item.gwpManufacturingPerMeter) || null}
-              </p>
-              <p>
-                GWP Manufacturing total
-                {roundNumber(item.gwpManufacturingTotal) || null}
-              </p>
-              <p>
-                GWP Transport per m
-                {roundNumber(item.gwpTransportPerMeter) || null}
-              </p>
-              <p>
-                GWP Transport total
-                {roundNumber(item.gwpTransportTotal) || null}
-              </p>
-              <p>
-                GWP Assembly per m
-                {roundNumber(item.gwpAssemblyPerMeter) || null}
-              </p>
-              <p>
-                GWP Assembly total
-                {roundNumber(item.gwpAssemblyTotal) || null}
-              </p>
-              <p>
-                GWP total
-                {roundNumber(item.gwpTotal) || null}
-              </p>
-              <button onClick={() => removeItem(index)}>
-                <FontAwesomeIcon icon={faTrash} />
-              </button>
-              {/*      <hr className="dotted-line" /> */}
-            </div>
-          );
-        })}
-        <p>Summa GWP kgCO2e{roundNumber(gwpTotal) || null}</p>
+        <Table id="main-table-calculation">
+          <Thead>
+            <Tr>
+              <Th className="th-calc-list">Product</Th>
+              <Th className="th-calc-list">Thickness (mm)</Th>
+              <Th className="th-calc-list">Surface area used (m2)</Th>
+              <Th className="th-calc-list">Volume (m3)</Th>
+              <Th className="th-calc-list">GWP manufacturing</Th>
+              <Th className="th-calc-list">GWP transport</Th>
+              <Th className="th-calc-list">GWP assembly</Th>
+              <Th className="th-calc-list">Total</Th>
+              <Th className="th-calc-list"></Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {items.map((item, index) => {
+              return (
+                <Tr key={index} className="item">
+                  <Td className="td-align-top">
+                    <Select
+                      id="material"
+                      options={itemOptions}
+                      className={`form-control ${
+                        errors[index].item.error && "invalid"
+                      }`}
+                      errors={errors[index].item}
+                      onChange={(selected) => {
+                        //change error to false
+                        let newErrors = [...errors];
+                        newErrors[index].item = {
+                          ...newErrors[index].item,
+                          error: false,
+                        };
+                        setErrors(newErrors);
+                        const selectedParameters = data.find(
+                          (item) => item.epd === selected.epd
+                        );
+                        let newArr = [...items];
+                        newArr[index] = {
+                          ...newArr[index],
+                          ...selectedParameters,
+                          ...calculateParameters(
+                            newArr[index].volume,
+                            selectedParameters.manufacturing,
+                            selectedParameters.transport,
+                            selectedParameters.assembly,
+                            props.selectedDistance
+                          ),
+                        };
+                        setItems(newArr);
+                      }}
+                    />
+                    {errors[index].item.error && (
+                      <small className="text-danger">
+                        {errors[index].item.message}
+                      </small>
+                    )}
+                  </Td>
+                  <Td className="td-align-top">
+                    <Field
+                      name="thickness"
+                      className={`form-control ${
+                        errors[index].thickness.error && "invalid"
+                      }`}
+                      id={index}
+                      placeholder={"0"}
+                      errors={errors[index].thickness}
+                      onChange={handleChange(index)}
+                    />
+                  </Td>
+                  <Td className="td-align-top">
+                    <Field
+                      name="surfaceArea"
+                      className={`form-control ${
+                        errors[index].surfaceArea.error && "invalid"
+                      }`}
+                      id={index}
+                      placeholder={"0"}
+                      errors={errors[index].surfaceArea}
+                      onChange={handleChange(index)}
+                    />
+                  </Td>
+                  <Td className="calc-values">
+                    <p>{roundNumber(item.volume)}</p>
+                  </Td>
+                  <Td className="calc-values">
+                    <p>{roundNumber(item.gwpManufacturingTotal) || 0}</p>
+                  </Td>
+                  <Td className="calc-values">
+                    <p>{roundNumber(item.gwpTransportTotal) || 0}</p>
+                  </Td>
+                  <Td className="calc-values">
+                    <p>{roundNumber(item.gwpAssemblyTotal) || 0}</p>
+                  </Td>
+                  <Td className="calc-values">
+                    <p>{roundNumber(item.gwpTotal) || 0}</p>
+                  </Td>
+                  <Td id="delete-row">
+                    <button
+                      className="delete-calculation"
+                      onClick={() => removeItem(index)}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </Td>
+                </Tr>
+              );
+            })}
+          </Tbody>
+        </Table>
         <button
-          className="btn"
+          className="add-calculation"
           onClick={() => {
             setItems([...items, { thickness: 0, surfaceArea: 0, volume: 0 }]);
             setErrors([
@@ -309,15 +308,15 @@ const Counts = (props) => {
               {
                 item: {
                   error: true,
-                  message: "mat required",
+                  message: "Material is required!",
                 },
                 thickness: {
                   error: true,
-                  message: "thick required",
+                  message: "Thickness is required!",
                 },
                 surfaceArea: {
                   error: true,
-                  message: "surf required",
+                  message: "Surface area is required!",
                 },
               },
             ]);
@@ -325,6 +324,22 @@ const Counts = (props) => {
         >
           <FontAwesomeIcon icon={faPlus} />
         </button>
+        <Table id="table-total-sum">
+          <Thead>
+            <Tr>
+              <Th id="total-sum-title">
+                <p>Sum GWP(kgCO2e)</p>
+              </Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            <Tr>
+              <Td id="total-sum-value">
+                <p>{roundNumber(gwpTotal) || 0}</p>
+              </Td>
+            </Tr>
+          </Tbody>
+        </Table>
       </>
     );
   else return <p>Loading</p>;
