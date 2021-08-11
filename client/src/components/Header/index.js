@@ -65,7 +65,7 @@ const Header = (props) => {
                   },
                   pattern: {
                     value: /^[0-9]*$/,
-                    message: "Only numbers are allowed!",
+                    message: "Only numbers greater 0!",
                   },
                 })}
                 onKeyUp={(event) => {
@@ -102,11 +102,11 @@ const Header = (props) => {
                 {...register("distance", {
                   min: {
                     value: 0,
-                    message: "Distance must be 0 or greater!",
+                    message: "Must be 0 or greater!",
                   },
                   pattern: {
                     value: /^[0-9]*$/,
-                    message: "Only numbers are allowed!",
+                    message: "Only numbers 0 or greater!",
                   },
                 })}
                 onKeyUp={(event) => {

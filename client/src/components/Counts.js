@@ -120,7 +120,7 @@ const Counts = (props) => {
         newErrors[index].thickness = {
           ...newErrors[index].thickness,
           error: true,
-          message: "Only numbers 0 or greater allowed!",
+          message: "Only positive numbers!",
         };
         setErrors(newErrors);
       }
@@ -173,7 +173,7 @@ const Counts = (props) => {
         newErrors[index].surfaceArea = {
           ...newErrors[index].surfaceArea,
           error: true,
-          message: "Only numbers 0 or greater allowed!",
+          message: "Only positive numbers!",
         };
         setErrors(newErrors);
       }
