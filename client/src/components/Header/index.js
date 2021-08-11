@@ -15,8 +15,6 @@ const Header = (props) => {
   useEffect(() => {
     trigger("footprint");
   }, [props.validFootprintSize, trigger]);
-
-  console.log("valid?", props.validFootprintSize);
   return (
     <>
       <h1 id="header-title">Carbon calculator</h1>
